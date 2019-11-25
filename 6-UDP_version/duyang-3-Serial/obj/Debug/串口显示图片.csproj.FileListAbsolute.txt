@@ -1,0 +1,2 @@
+D:\Users\HOWU\Desktop\大创程序\上位机-UDP版\duyang-3-Serial\obj\Debug\duyang-3-Serial.exe
+D:\Users\HOWU\Desktop\大创程序\上位机-UDP版\duyang-3-Serial\obj\Debug\duyang-3-Serial.pdb

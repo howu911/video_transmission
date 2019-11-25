@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29424.173
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "串口显示图片", "duyang-3-Serial\串口显示图片.csproj", "{B3C3EB1B-26C8-4600-BD34-C3DC5AF48D2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UDP_Parctice", "UDP_Parctice\UDP_Parctice.csproj", "{944CF419-380E-4BB9-8646-27D1E2DC3E60}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B3C3EB1B-26C8-4600-BD34-C3DC5AF48D2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3C3EB1B-26C8-4600-BD34-C3DC5AF48D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3C3EB1B-26C8-4600-BD34-C3DC5AF48D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3C3EB1B-26C8-4600-BD34-C3DC5AF48D2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{944CF419-380E-4BB9-8646-27D1E2DC3E60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{944CF419-380E-4BB9-8646-27D1E2DC3E60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{944CF419-380E-4BB9-8646-27D1E2DC3E60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{944CF419-380E-4BB9-8646-27D1E2DC3E60}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {41792B18-593A-4238-BEB3-BDCF886AA897}
+	EndGlobalSection
+EndGlobal

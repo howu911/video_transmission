@@ -1,0 +1,16 @@
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\duyang-3-Serial\bin\Debug\duyang-3-Serial.exe
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\duyang-3-Serial\bin\Debug\duyang-3-Serial.pdb
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\duyang-3-Serial\obj\Debug\duyang-3-Serial.csprojResolveAssemblyReference.cache
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\duyang-3-Serial\obj\Debug\duyang_3_Serial.Form1.resources
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\duyang-3-Serial\obj\Debug\duyang_3_Serial.Properties.Resources.resources
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\duyang-3-Serial\obj\Debug\duyang-3-Serial.csproj.GenerateResource.Cache
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\duyang-3-Serial\obj\Debug\duyang-3-Serial.exe
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\duyang-3-Serial\obj\Debug\duyang-3-Serial.pdb
+D:\Users\HOWU\Desktop\大创程序\上位机\duyang-3-Serial\bin\Debug\duyang-3-Serial.exe
+D:\Users\HOWU\Desktop\大创程序\上位机\duyang-3-Serial\bin\Debug\duyang-3-Serial.pdb
+D:\Users\HOWU\Desktop\大创程序\上位机\duyang-3-Serial\obj\Debug\duyang-3-Serial.csprojAssemblyReference.cache
+D:\Users\HOWU\Desktop\大创程序\上位机\duyang-3-Serial\obj\Debug\duyang_3_Serial.Form1.resources
+D:\Users\HOWU\Desktop\大创程序\上位机\duyang-3-Serial\obj\Debug\duyang_3_Serial.Properties.Resources.resources
+D:\Users\HOWU\Desktop\大创程序\上位机\duyang-3-Serial\obj\Debug\duyang-3-Serial.csproj.GenerateResource.cache
+D:\Users\HOWU\Desktop\大创程序\上位机\duyang-3-Serial\obj\Debug\duyang-3-Serial.exe
+D:\Users\HOWU\Desktop\大创程序\上位机\duyang-3-Serial\obj\Debug\duyang-3-Serial.pdb

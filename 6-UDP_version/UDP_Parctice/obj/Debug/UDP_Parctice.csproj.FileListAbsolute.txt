@@ -1,0 +1,16 @@
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\UDP_Parctice\bin\Debug\UDP_Parctice.exe
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\UDP_Parctice\bin\Debug\UDP_Parctice.pdb
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\UDP_Parctice\obj\Debug\UDP_Parctice.csprojResolveAssemblyReference.cache
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\UDP_Parctice\obj\Debug\UDP_Parctice.Form1.resources
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\UDP_Parctice\obj\Debug\UDP_Parctice.Properties.Resources.resources
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\UDP_Parctice\obj\Debug\UDP_Parctice.csproj.GenerateResource.Cache
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\UDP_Parctice\obj\Debug\UDP_Parctice.exe
+D:\Users\HOWU\Documents\Visual Studio 2013\Projects\demo_new_projiect\UDP_Parctice\obj\Debug\UDP_Parctice.pdb
+D:\Users\HOWU\Desktop\大创程序\上位机-UDP版\UDP_Parctice\obj\Debug\UDP_Parctice.exe
+D:\Users\HOWU\Desktop\大创程序\上位机-UDP版\UDP_Parctice\obj\Debug\UDP_Parctice.pdb
+D:\Users\HOWU\Desktop\大创程序\上位机-UDP版\UDP_Parctice\bin\Debug\UDP_Parctice.exe
+D:\Users\HOWU\Desktop\大创程序\上位机-UDP版\UDP_Parctice\bin\Debug\UDP_Parctice.pdb
+D:\Users\HOWU\Desktop\大创程序\上位机-UDP版\UDP_Parctice\obj\Debug\UDP_Parctice.csprojResolveAssemblyReference.cache
+D:\Users\HOWU\Desktop\大创程序\上位机-UDP版\UDP_Parctice\obj\Debug\UDP_Parctice.Form1.resources
+D:\Users\HOWU\Desktop\大创程序\上位机-UDP版\UDP_Parctice\obj\Debug\UDP_Parctice.Properties.Resources.resources
+D:\Users\HOWU\Desktop\大创程序\上位机-UDP版\UDP_Parctice\obj\Debug\UDP_Parctice.csproj.GenerateResource.Cache
