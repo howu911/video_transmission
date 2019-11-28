@@ -45,8 +45,16 @@
             this.ClearReciveDataButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // LocalIPAddressTextBox
@@ -108,7 +116,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(342, 244);
+            this.pictureBox1.Location = new System.Drawing.Point(271, 18);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(320, 240);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -117,12 +125,12 @@
             // 
             // PictureDataBox
             // 
-            this.PictureDataBox.Location = new System.Drawing.Point(342, 12);
+            this.PictureDataBox.Location = new System.Drawing.Point(6, 20);
             this.PictureDataBox.Multiline = true;
             this.PictureDataBox.Name = "PictureDataBox";
             this.PictureDataBox.ReadOnly = true;
             this.PictureDataBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.PictureDataBox.Size = new System.Drawing.Size(320, 226);
+            this.PictureDataBox.Size = new System.Drawing.Size(308, 151);
             this.PictureDataBox.TabIndex = 7;
             // 
             // label4
@@ -175,7 +183,7 @@
             this.ClearReciveDataButton.Name = "ClearReciveDataButton";
             this.ClearReciveDataButton.Size = new System.Drawing.Size(75, 23);
             this.ClearReciveDataButton.TabIndex = 13;
-            this.ClearReciveDataButton.Text = "清空接收区";
+            this.ClearReciveDataButton.Text = "清空数据区";
             this.ClearReciveDataButton.UseVisualStyleBackColor = true;
             this.ClearReciveDataButton.Click += new System.EventHandler(this.ClearReciveDataButton_Click);
             // 
@@ -202,16 +210,77 @@
             // 
             // timer1
             // 
-            this.timer1.Interval = 1000;
+            this.timer1.Interval = 50;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.button4);
+            this.groupBox2.Controls.Add(this.button3);
+            this.groupBox2.Controls.Add(this.button2);
+            this.groupBox2.Controls.Add(this.button1);
+            this.groupBox2.Location = new System.Drawing.Point(12, 289);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(253, 177);
+            this.groupBox2.TabIndex = 19;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "机器人控制区";
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(175, 104);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(56, 22);
+            this.button4.TabIndex = 22;
+            this.button4.Text = "前进";
+            this.button4.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(93, 104);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(56, 22);
+            this.button3.TabIndex = 21;
+            this.button3.Text = "前进";
+            this.button3.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(16, 104);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(56, 22);
+            this.button2.TabIndex = 20;
+            this.button2.Text = "前进";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(93, 54);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(56, 22);
+            this.button1.TabIndex = 19;
+            this.button1.Text = "前进";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.PictureDataBox);
+            this.groupBox3.Location = new System.Drawing.Point(271, 289);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(320, 177);
+            this.groupBox3.TabIndex = 20;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "控制数据回显区";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(674, 496);
+            this.ClientSize = new System.Drawing.Size(603, 477);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.PictureDataBox);
             this.Controls.Add(this.pictureBox1);
             this.Name = "Form1";
             this.Text = "UDP Connect By Lai";
@@ -220,8 +289,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -243,6 +314,12 @@
         private System.Windows.Forms.Button ClearReciveDataButton;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.GroupBox groupBox3;
     }
 }
 

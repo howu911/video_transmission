@@ -37,11 +37,12 @@ namespace UDP_Parctice
         public const ushort RGB565_MASK_BLUE = 0x001F;
 
         //发送数据宏定义
-        public const string send_over = "O";
-        public const string up = "U";
-        public const string down = "D";
-        public const string left = "L";
-        public const string rightt = "R";
+        byte[] send_data = new byte[1];
+        public const byte send_over = 0x08;
+        public const byte up = 0x0A;
+        public const byte down = 0x0B;
+        public const byte left = 0x0C;
+        public const byte rightt = 0x0D;
 
 
         //定义接收一帧图像的字符串
@@ -50,10 +51,6 @@ namespace UDP_Parctice
         //定义接收一帧图像的字节数组
         public byte[] picture_byte = new byte[153600];
         //public byte[] RGB888 = new byte[3];
-
-        //定义一帧图像的起始和结束标志
-        public const string str_begin = "FF11FF11FF11";
-        public const string str_end = "EE22EE22EE22";
 
         //创建发送和接收线程
         Thread threadUDPWatch = null;
@@ -67,7 +64,6 @@ namespace UDP_Parctice
 
         //接收和发送的数据
         string recData;
-        string sendData;
 
         //打开端口标志
         bool close_flag = false;
@@ -128,7 +124,9 @@ namespace UDP_Parctice
                         return;
                     }
                     threadUDPWatch = new Thread(RecMsg);
-                    threadUDPSend = new Thread(SendMsg);
+                  //  threadUDPSend = new Thread(SendMsg);
+                 //   threadUDPSend.Start();
+                 //   threadUDPSend.Suspend();
                     threadUDPWatch.Start();
                     close_flag = true;
                 }
@@ -164,6 +162,9 @@ namespace UDP_Parctice
                 byte[] buffer = new byte[640];
                 int length = socketUDP.ReceiveFrom(buffer, ref RecPoint);
                 buffer.CopyTo(picture_byte, 640 * line);
+                line++;
+                if (line == 240)
+                    threadUDPWatch.Suspend();
                // string temp = "";
                // foreach (byte member in buffer)
               //  {
@@ -186,7 +187,8 @@ namespace UDP_Parctice
             EndPoint point = new IPEndPoint(IPAddress.Parse("192.168.1.88"), 8088);
             while (true)
             {
-                socketUDP.SendTo(Encoding.Default.GetBytes(sendData),  point);
+                socketUDP.SendTo(send_data,  point);
+                threadUDPSend.Suspend();
             }
         }
 
@@ -211,16 +213,17 @@ namespace UDP_Parctice
             {
                 line = 0;
                 //在全局变量中移除已经取得的一帧数据
-                str_src = str_src.Remove(str_src.IndexOf(str_begin), (str_src.IndexOf(str_end) - str_src.IndexOf(str_begin) + 12));
+                //str_src = str_src.Remove(str_src.IndexOf(str_begin), (str_src.IndexOf(str_end) - str_src.IndexOf(str_begin) + 12));
                 //textBox3.AppendText(picture_str);
                 //将字符串转换为16进制字节数组
                 //声明一个字节数组，其长度等于字符串长度的一半。
                 //byte[] buffer = new byte[picture_str.Length / 2];
-                Hex16StringToByte(picture_str);
+               // Hex16StringToByte(picture_str);
                 //将字节数组转换为图片
                 pictureBox1.Image = GetDataPicture(pictureBox1.Width, pictureBox1.Height, picture_byte);
+                threadUDPWatch.Resume();
                 //将原来的数据清空
-                str_src = "";
+                //str_src = "";
                 return;
             }
             else
@@ -329,6 +332,13 @@ namespace UDP_Parctice
             }
             //返回字节数组。
             //return buffer;
+        }
+
+        //发送前进命令
+        private void button1_Click(object sender, EventArgs e)
+        {
+            send_data[0] = up;
+            threadUDPSend.Resume();
         }
 
     }
