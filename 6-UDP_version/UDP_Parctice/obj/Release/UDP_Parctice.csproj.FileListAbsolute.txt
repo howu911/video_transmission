@@ -1,0 +1,8 @@
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\UDP_Parctice\bin\Release\UDP_Parctice.exe
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\UDP_Parctice\bin\Release\UDP_Parctice.pdb
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\UDP_Parctice\obj\Release\UDP_Parctice.Form1.resources
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\UDP_Parctice\obj\Release\UDP_Parctice.Properties.Resources.resources
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\UDP_Parctice\obj\Release\UDP_Parctice.csproj.GenerateResource.Cache
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\UDP_Parctice\obj\Release\UDP_Parctice.exe
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\UDP_Parctice\obj\Release\UDP_Parctice.pdb
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\UDP_Parctice\obj\Release\UDP_Parctice.csprojResolveAssemblyReference.cache

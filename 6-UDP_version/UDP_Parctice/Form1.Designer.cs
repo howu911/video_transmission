@@ -64,7 +64,6 @@
             this.LocalIPAddressTextBox.Size = new System.Drawing.Size(121, 21);
             this.LocalIPAddressTextBox.TabIndex = 0;
             this.LocalIPAddressTextBox.Text = "192.168.1.105";
-            this.LocalIPAddressTextBox.TextChanged += new System.EventHandler(this.IPAddressTextBox_TextChanged);
             // 
             // TypeOfProtocolComboBox
             // 
@@ -232,8 +231,9 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(56, 22);
             this.button4.TabIndex = 22;
-            this.button4.Text = "前进";
+            this.button4.Text = "右转";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button3
             // 
@@ -241,8 +241,9 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(56, 22);
             this.button3.TabIndex = 21;
-            this.button3.Text = "前进";
+            this.button3.Text = "后退";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button2
             // 
@@ -250,8 +251,9 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(56, 22);
             this.button2.TabIndex = 20;
-            this.button2.Text = "前进";
+            this.button2.Text = "左转";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button1
             // 
