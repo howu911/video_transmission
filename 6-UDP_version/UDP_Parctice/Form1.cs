@@ -38,6 +38,7 @@ namespace UDP_Parctice
 
         //发送数据宏定义
         byte[] send_data = new byte[1];
+        byte[] control_data = new byte[1];
         public const byte send_start = 0x01;
         public const byte send_over = 0x08;
         public const byte up = 0x0A;
@@ -54,10 +55,13 @@ namespace UDP_Parctice
 
         //创建发送和接收线程
         Thread threadUDPWatch = null;
+        Thread threadUDPReceive2 = null;
         Thread threadUDPSend = null;
+        Thread threadUDPSend2 = null;
 
         //创建socket套接字
         Socket socketUDP = null;
+        Socket socketUDP2 = null;
 
         //创建网络连接模式
         string selectedMode;
@@ -95,6 +99,7 @@ namespace UDP_Parctice
                 IPAddress address = IPAddress.Parse(LocalIPAddressTextBox.Text.Trim());
                 int portNum = int.Parse(LocalIPPortTextBox.Text.Trim());
                 IPEndPoint endPoint = new IPEndPoint(address, portNum);
+                IPEndPoint endPoint2 = new IPEndPoint(address, 5001);
 
                 selectedMode = TypeOfProtocolComboBox.Text.ToString();
 
@@ -113,9 +118,11 @@ namespace UDP_Parctice
                     if (Form_start)
                     {
                         socketUDP = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                        socketUDP2 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                         try
                         {
                             socketUDP.Bind(endPoint);
+                            socketUDP2.Bind(endPoint2);
                         }
                         catch (SocketException se)
                         {
@@ -127,14 +134,25 @@ namespace UDP_Parctice
                         threadUDPWatch = new Thread(RecMsg);
                         threadUDPSend = new Thread(SendMsg);
                         threadUDPSend.Start();
+                        threadUDPWatch.Start();
+                        threadUDPSend.Suspend();
+
                         send_data[0] = send_start;
                        // for (int i = 5; i < 0; i-- )
                       //  {
                             
-                        //    threadUDPSend.Resume();
+                        threadUDPSend.Resume();
                        //     for (int j = 1000; j < 0; j--) ;
                        // }
-                        threadUDPWatch.Start();
+                        
+
+
+                        threadUDPSend2 = new Thread(SendMsg2);
+                       // threadUDPReceive2 = new Thread(RecMsg2);
+                       // threadUDPReceive2.Start();
+                        threadUDPSend2.Start();
+                        threadUDPSend2.Suspend();
+
                         Form_start = false;
                         close_flag = true;
                     }
@@ -170,7 +188,7 @@ namespace UDP_Parctice
             while (true)
             {
                 //用来保存发送方的IP和端口号
-                EndPoint RecPoint = new IPEndPoint(IPAddress.Any, 0);
+                EndPoint RecPoint = new IPEndPoint(IPAddress.Parse("192.168.1.88"), 8088);
                 byte[] buffer = new byte[1280];
                 int length = socketUDP.ReceiveFrom(buffer, ref RecPoint);
                 if (picture_flag)
@@ -192,6 +210,18 @@ namespace UDP_Parctice
             }
         }
 
+        private void RecMsg2()
+        {
+            //这是一个线程，所以用死循环
+            while (true)
+            {
+                //用来保存发送方的IP和端口号
+                EndPoint RecPoint = new IPEndPoint(IPAddress.Parse("192.168.1.88"), 8089);
+                byte[] buffer = new byte[2];
+                int length = socketUDP2.ReceiveFrom(buffer, ref RecPoint);
+            }
+        }
+
         //向特定的主机的端口发送数据
         private void SendMsg()
         {
@@ -204,20 +234,42 @@ namespace UDP_Parctice
             }
         }
 
+        private void SendMsg2()
+        {
+            EndPoint point = new IPEndPoint(IPAddress.Parse("192.168.1.88"), 8089);
+            EndPoint RecPoint = new IPEndPoint(IPAddress.Any, 0);
+            while (true)
+            {
+                socketUDP2.SendTo(control_data, point);
+                threadUDPSend2.Suspend();
+            }
+        }
+
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
            // for (int i = 5; i < 0; i--)
            // {
+            if(!Form_start)
+            {
                 send_data[0] = send_over;
                 threadUDPSend.Resume();
+            }
+                
             //    for (int j = 1000; j < 0; j--) ;
            // }
 
             if (close_flag)
             {
                 threadUDPWatch.Abort();
-               // threadUDPSend.Abort();
+                if (threadUDPSend.ThreadState == ThreadState.Suspended)
+                    threadUDPSend.Resume();
+                threadUDPSend.Abort();
                 socketUDP.Close();
+               // threadUDPReceive2.Abort();
+                if (threadUDPSend2.ThreadState == ThreadState.Suspended)
+                    threadUDPSend2.Resume();
+                threadUDPSend2.Abort();
+                socketUDP2.Close();
             }
             
         }
@@ -326,7 +378,6 @@ namespace UDP_Parctice
                 rgb565_2_rgb24(rgb24, RGB565_Temp);
                 //设置像素
                 c = Color.FromArgb(rgb24[2], rgb24[1], rgb24[0]);
-                //c = Color.FromArgb(0x00, 0x00, 0x00);
                 //将像素写进图片
                 pic.SetPixel(j % w, j / w, c);
                 j++;
@@ -351,29 +402,29 @@ namespace UDP_Parctice
         //发送前进命令
         private void button1_Click(object sender, EventArgs e)
         {
-            send_data[0] = up;
-            threadUDPSend.Resume();
+            control_data[0] = up;
+            threadUDPSend2.Resume();
             PictureDataBox.AppendText("up\r\n");
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            send_data[0] = left;
-            threadUDPSend.Resume();
+            control_data[0] = left;
+            threadUDPSend2.Resume();
             PictureDataBox.AppendText("left\r\n");
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            send_data[0] = down;
-            threadUDPSend.Resume();
+            control_data[0] = down;
+            threadUDPSend2.Resume();
             PictureDataBox.AppendText("down\r\n");
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            send_data[0] = rightt;
-            threadUDPSend.Resume();
+            control_data[0] = rightt;
+            threadUDPSend2.Resume();
             PictureDataBox.AppendText("right\r\n");
         }
 

@@ -14,7 +14,7 @@
 #define SOCK_WEIBO      	  2
 #define SOCK_DHCP             3
 #define SOCK_HTTPS            4
-#define SOCK_DNS              5
+#define SOCK_UDPS2            5
 #define SOCK_SMTP             6
 #define SOCK_NTP              7
 //#define NETBIOS_SOCK    6 //在netbios.c已定义

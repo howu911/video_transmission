@@ -317,11 +317,11 @@ ARM Macro Assembler    Page 5
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\os_cpu_a.d -o.\objects\os_cpu_a.o -ID:\Users\HOWU\Deskto
-p\大创程序\3-摄像头数据发送给W5500融合\Project\RVMDK（uv5）\RTE -IC:\Keil_v5\AR
-M\PACK\Keil\STM32F1xx_DFP\2.1.0\Device\Include -IC:\Keil_v5\ARM\CMSIS\Include -
--predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 520" --prede
-fine="STM32F10X_HD SETA 1" --list=.\listings\os_cpu_a.lst ..\..\User\uCOS-III\P
-orts\ARM-Cortex-M3\Generic\RealView\os_cpu_a.s
+p\video_transmission\STM32\Project\RVMDK（uv5）\RTE -IC:\Keil_v5\ARM\PACK\Keil\
+STM32F1xx_DFP\2.1.0\Device\Include -IC:\Keil_v5\ARM\CMSIS\Include --predefine="
+__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 520" --predefine="STM32F
+10X_HD SETA 1" --list=.\listings\os_cpu_a.lst ..\..\User\uCOS-III\Ports\ARM-Cor
+tex-M3\Generic\RealView\os_cpu_a.s
 
 
 

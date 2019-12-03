@@ -190,7 +190,7 @@ static  void  AppTaskStart (void *p_arg)
                  (void       *) 0,                                          //任务扩展（0表不扩展）
                  (OS_OPT      )(OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR), //任务选项
                  (OS_ERR     *)&err);                                       //返回错误类型
-#if 0								 								 
+#if 1								 								 
 	  OSTaskCreate((OS_TCB     *)&AppTaskRecvieDataTCB,                             //任务控制块地址
                  (CPU_CHAR   *)"App Task Recvie Data",                             //任务名称
                  (OS_TASK_PTR ) AppTaskReciveData,                                //任务函数
@@ -315,26 +315,27 @@ static  void  AppTaskReciveData ( void * p_arg )
 {
 	OS_ERR      err;
 	uint8_t len = 0;
+	uint16 local_port2 = 8089;                              /*定义本地端口UDP2*/
 	uint8_t buff[1] = {0};
 	uint8_t AckData[1] = { 0x01};
 	(void)p_arg;
 	
 	while (DEF_TRUE) {                                   //任务体，通常写成一个死循环
-		switch(getSn_SR(SOCK_UDPS))                                                /*获取socket的状态*/
+		switch(getSn_SR(SOCK_UDPS2))                                                /*获取socket的状态*/
 		{
 			case SOCK_CLOSED:                                                        /*socket处于关闭状态*/
-				socket(SOCK_UDPS,Sn_MR_UDP,local_port,0);                              /*初始化socket*/
+				socket(SOCK_UDPS2,Sn_MR_UDP,local_port2,0);                              /*初始化socket*/
 				break;
 			
 			case SOCK_UDP:                                                           /*socket初始化完成*/
-				if(getSn_IR(SOCK_UDPS) & Sn_IR_RECV)
+				if(getSn_IR(SOCK_UDPS2) & Sn_IR_RECV)
 				{
-					setSn_IR(SOCK_UDPS, Sn_IR_RECV);                                     /*清接收中断*/
+					setSn_IR(SOCK_UDPS2, Sn_IR_RECV);                                     /*清接收中断*/
 				}
-				//sendto(SOCK_UDPS,buff1,6, remote_ip, remote_port);
-				if((len=getSn_RX_RSR(SOCK_UDPS))>0)                                    /*接收到数据*/
+				//sendto(SOCK_UDPS2,buff1,6, remote_ip, remote_port);
+				if((len=getSn_RX_RSR(SOCK_UDPS2))>0)                                    /*接收到数据*/
 				{
-					recvfrom(SOCK_UDPS,buff, len, remote_ip,&remote_port);               /*W5500接收计算机发送来的数据*/
+					recvfrom(SOCK_UDPS2,buff, len, remote_ip,&remote_port2);               /*W5500接收计算机发送来的数据*/
 					if(buff[0] == 0x0A)                                                    
 						printf("up\r\n");
 					if(buff[0] == 0x0B)                                                    
@@ -343,7 +344,7 @@ static  void  AppTaskReciveData ( void * p_arg )
 						printf("left\r\n");
 					if(buff[0] == 0x0D)                                                    
 						printf("right\r\n");
-					sendto(SOCK_UDPS,AckData, 1, remote_ip, remote_port);                /*W5500把接收到的数据发送给Remote*/
+					//sendto(SOCK_UDPS,AckData, 1, remote_ip, remote_port);                /*W5500把接收到的数据发送给Remote*/
 				}
 				break;
 		}	

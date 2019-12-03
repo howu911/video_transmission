@@ -21,26 +21,42 @@ Target DLL:      CMSIS_AGDI.dll V1.25.20.0
 Dialog DLL:      TCM.DLL V1.14.9.0
  
 <h2>Project:</h2>
-D:\Users\HOWU\Desktop\大创程序\3-摄像头数据发送给W5500融合\Project\RVMDK（uv5）\Fire_uCOS.uvprojx
+D:\Users\HOWU\Desktop\video_transmission\STM32\Project\RVMDK（uv5）\Fire_uCOS.uvprojx
 Project File Date:  10/30/2019
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 2 (build 183)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Fire_uCOS'
+compiling stm32f10x_it.c...
+compiling app.c...
+..\..\User\APP\app.c(271): warning:  #177-D: variable "AckData" was declared but never referenced
+  	uint8_t AckData[1] = { 0x01};
+..\..\User\APP\app.c(273): warning:  #177-D: variable "buff" was declared but never referenced
+  	uint8_t buff[1] = {0};
+..\..\User\APP\app.c(320): warning:  #177-D: variable "AckData" was declared but never referenced
+  	uint8_t AckData[1] = { 0x01};
+..\..\User\APP\app.c: 3 warnings, 0 errors
+compiling bsp.c...
+compiling dhcp.c...
+compiling socket.c...
+compiling bsp_key.c...
+compiling utility.c...
+compiling w5500.c...
+compiling w5500_conf.c...
 compiling image.c...
 ..\..\User\BSP\Image\image.c(57): warning:  #177-D: variable "err" was declared but never referenced
   	OS_ERR  err;
 ..\..\User\BSP\Image\image.c: 1 warning, 0 errors
 linking...
-Program Size: Code=33376 RO-data=16064 RW-data=532 ZI-data=51100  
-".\Objects\ISO-STM32.axf" - 0 Error(s), 1 Warning(s).
+Program Size: Code=33680 RO-data=16064 RW-data=536 ZI-data=51096  
+".\Objects\ISO-STM32.axf" - 0 Error(s), 4 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
-  D:\Users\HOWU\Desktop\大创程序\3-摄像头数据发送给W5500融合\Project\RVMDK（uv5）\RTE
+  D:\Users\HOWU\Desktop\video_transmission\STM32\Project\RVMDK（uv5）\RTE
   C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.1.0\Device\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:04
 </pre>
 </body>
 </html>
