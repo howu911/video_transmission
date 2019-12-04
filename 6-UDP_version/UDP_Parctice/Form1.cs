@@ -2,30 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using System.Windows;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-//using System.Windows.Controls;
-//using System.Windows.Data;
-//using System.Windows.Documents;
-//using System.Windows.Input;
-//using System.Windows.Media;
-//using System.Windows.Media.Imaging;
-//using System.Windows.Navigation;
-//using System.Windows.Shapes;
+
 
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.IO;
-//using System.Text.RegularExpressions;
 using System.Windows.Threading;
-//using Microsoft.Win32;
-//using System.Collections;
-
-//using System.Drawing.Image;
 
 namespace UDP_Parctice
 {
@@ -66,13 +53,9 @@ namespace UDP_Parctice
         //创建网络连接模式
         string selectedMode;
 
-        //接收和发送应答的数据
-      //  byte[] ack_data = new byte[1];
-
-        //打开端口标志
-        bool close_flag = false;
-        //第一次打开标志
-        bool Form_start = true;
+        //发送数据线程挂起标志
+        bool send1_flag = true;
+        bool send2_flag = true;
         //复制字节数组索引
         uint line = 0; 
 
@@ -87,96 +70,88 @@ namespace UDP_Parctice
         {
             //pictureBox1.Image = Image.FromFile("D:\\Users\\HOWU\\Desktop\\IMG_7315.jpg");   
             TypeOfProtocolComboBox.Text = "UDP";
+            //获取本地IP及端口号，定义IPEndPoint endPoint变量，待后续与socket绑定
+            IPAddress address = IPAddress.Parse(LocalIPAddressTextBox.Text.Trim());
+            int portNum = int.Parse(LocalIPPortTextBox.Text.Trim());
+            IPEndPoint endPoint = new IPEndPoint(address, portNum);
+            IPEndPoint endPoint2 = new IPEndPoint(address, 6000);
+
+            socketUDP = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            socketUDP2 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            try
+            {
+                socketUDP.Bind(endPoint);
+                socketUDP2.Bind(endPoint2);
+            }
+            catch (SocketException se)
+            {
+                MessageBox.Show("创建UDP服务器失败！", "错误");
+                return;
+            }
+            threadUDPWatch = new Thread(RecMsg);
+            threadUDPSend = new Thread(SendMsg);
+            line = 0;
+            threadUDPSend.Start();
+            threadUDPWatch.Start();
+
+            threadUDPSend2 = new Thread(SendMsg2);
+            threadUDPReceive2 = new Thread(RecMsg2);
+            threadUDPReceive2.Start();
+            threadUDPSend2.Start();
+            
+        }
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            send_data[0] = send_over;
+            threadUDPSend.Resume();
+            threadUDPWatch.Abort();
+            try
+            {
+                if (threadUDPSend2.ThreadState == ThreadState.Suspended)
+                    threadUDPSend2.Resume();
+                threadUDPSend2.Abort();
+            }
+            catch
+            {
+                MessageBox.Show("threadUDPSend2", "错误");
+            }
+            try
+            {
+                if (threadUDPSend.ThreadState == ThreadState.Suspended)
+                    threadUDPSend.Resume();
+                threadUDPSend.Abort();
+            }
+            catch
+            {
+                MessageBox.Show("threadUDPSend", "错误");
+            }
+
+            socketUDP.Close();
+            threadUDPReceive2.Abort();
+            socketUDP2.Close();
         }
 
         private void ConnectButton_Click(object sender, EventArgs e)
         {
             if (ConnectButton.Text == "连接")
             {
+                line = 0;
                 ConnectButton.Text = "断开";
-                //获取本地IP及端口号，定义IPEndPoint endPoint变量，待后续与socket绑定
-                IPAddress address = IPAddress.Parse(LocalIPAddressTextBox.Text.Trim());
-                int portNum = int.Parse(LocalIPPortTextBox.Text.Trim());
-                IPEndPoint endPoint = new IPEndPoint(address, portNum);
-                IPEndPoint endPoint2 = new IPEndPoint(address, 6000);
-
-                selectedMode = TypeOfProtocolComboBox.Text.ToString();
-
-                if (selectedMode == "TCP Client")
-                {
-                    MessageBox.Show("TCP Client功能为编写", "错误");
-                    return;
-                }
-                else if (selectedMode == "TCP Server")
-                {
-                    MessageBox.Show("TCP Server功能为编写", "错误");
-                    return;
-                }
-                else if (selectedMode == "UDP")
-                {
-                    if (Form_start)
-                    {
-                        socketUDP = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                        socketUDP2 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                        try
-                        {
-                            socketUDP.Bind(endPoint);
-                            socketUDP2.Bind(endPoint2);
-                        }
-                        catch (SocketException se)
-                        {
-                            MessageBox.Show("创建UDP服务器失败！", "错误");
-                            return;
-                        }
-                        Array.Clear(picture_byte1, 0, 153600);
-                        Array.Clear(picture_byte2, 0, 153600);
-                        threadUDPWatch = new Thread(RecMsg);
-                        threadUDPSend = new Thread(SendMsg);
-                        threadUDPSend.Start();
-                        threadUDPWatch.Start();
-                        threadUDPSend.Suspend();
-
-                        send_data[0] = send_start;
-                       // for (int i = 5; i < 0; i-- )
-                      //  {
-                            
-                        threadUDPSend.Resume();
-                       //     for (int j = 1000; j < 0; j--) ;
-                       // }
-                        
-
-
-                        threadUDPSend2 = new Thread(SendMsg2);
-                        threadUDPReceive2 = new Thread(RecMsg2);
-                        threadUDPReceive2.Start();
-                        threadUDPSend2.Start();
-                        threadUDPSend2.Suspend();
-
-                        Form_start = false;
-                        close_flag = true;
-                    }
-                    timer1.Start();
+                send_data[0] = send_start;
+                threadUDPSend.Resume();
+                timer1.Start();
                     
-                }
             }
             else
             {
                 if (ConnectButton.Text == "断开")
                 {
                     ConnectButton.Text = "连接";
-                    try
-                    {
-                        timer1.Stop();
-                       // threadUDPWatch.Abort();
-                       // socketUDP.Close();
-                    }
-                    catch
-                    {
-                        return;
-                    }
+                    send_data[0] = send_over;
+                    threadUDPSend.Resume();
+                    timer1.Stop();
                 }
-            }
-            
+            }   
         }
 
 
@@ -209,23 +184,24 @@ namespace UDP_Parctice
             }
         }
 
-        private void RecMsg2()
+        private void RecMsg2()  //暂时未用到
         {
             //这是一个线程，所以用死循环
             while (true)
             {
-                int i = 0;
-                //用来保存发送方的IP和端口号
-                EndPoint RecPoint2 = new IPEndPoint(IPAddress.Any, 0);
-                byte[] buffer = new byte[2048];
-                int length = socketUDP2.ReceiveFrom(buffer, ref RecPoint2);
-                i++;
+
             }
         }
 
         //向特定的主机的端口发送数据
         private void SendMsg()
         {
+            //第一次调用线程，挂起
+            if (send1_flag)
+            {
+                threadUDPSend.Suspend();
+                send1_flag = false;
+            }
             EndPoint point = new IPEndPoint(IPAddress.Parse("192.168.1.88"), 8088);
             while (true)
             {
@@ -236,58 +212,18 @@ namespace UDP_Parctice
 
         private void SendMsg2()
         {
+            //第一次调用线程，挂起
+            if (send2_flag)
+            {
+                threadUDPSend2.Suspend();
+                send2_flag = false;
+            }
             EndPoint point = new IPEndPoint(IPAddress.Parse("192.168.1.88"), 7000);
             while (true)
             {
                 socketUDP2.SendTo(control_data, point);
                 threadUDPSend2.Suspend();
             }
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-           // for (int i = 5; i < 0; i--)
-           // {
-            if(!Form_start)
-            {
-                send_data[0] = send_over;
-                threadUDPSend.Resume();
-            }
-                
-            //    for (int j = 1000; j < 0; j--) ;
-           // }
-
-            if (close_flag)
-            {
-                threadUDPWatch.Abort();
-                try
-                {
-                    if (threadUDPSend2.ThreadState == ThreadState.Suspended)
-                        threadUDPSend2.Resume();
-                    threadUDPSend2.Abort();
-                }
-                catch
-                {
-                    MessageBox.Show("threadUDPSend2", "错误");
-                }
-                try 
-                {
-                    if (threadUDPSend.ThreadState == ThreadState.Suspended)
-                        threadUDPSend.Resume();
-                    threadUDPSend.Abort();
-                }
-                catch
-                {
-                    MessageBox.Show("threadUDPSend", "错误");
-                }
-                
-                socketUDP.Close();
-                threadUDPReceive2.Abort();
-                
-                
-                socketUDP2.Close();
-            }
-            
         }
 
         private void ClearReciveDataButton_Click(object sender, EventArgs e)
@@ -361,7 +297,6 @@ namespace UDP_Parctice
 #endif
         private static void rgb565_2_rgb24(byte[] rgb24, ushort rgb565)
         {
-            //uint data;
             //extract RGB   
             rgb24[2] = (byte)((rgb565 & RGB565_MASK_RED) >> 11);
             rgb24[1] = (byte)((rgb565 & RGB565_MASK_GREEN) >> 5);
