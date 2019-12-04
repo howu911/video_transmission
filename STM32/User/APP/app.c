@@ -315,7 +315,7 @@ static  void  AppTaskReciveData ( void * p_arg )
 {
 	OS_ERR      err;
 	uint8_t len = 0;
-	uint16 local_port2 = 8089;                              /*定义本地端口UDP2*/
+	uint16 local_port2 = 7000;                              /*定义本地端口UDP2*/
 	uint8_t buff[1] = {0};
 	uint8_t AckData[1] = { 0x01};
 	(void)p_arg;

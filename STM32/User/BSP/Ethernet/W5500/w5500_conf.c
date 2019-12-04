@@ -37,7 +37,7 @@ uint16 local_port=8088;	                       					/*定义本地端口UDP1*/
 /*定义远端IP信息*/
 uint8  remote_ip[4]={192,168,1,105};											/*远端IP地址*/
 uint16 remote_port=5000;																/*远端端口号*/
-uint16 remote_port2=5001;																/*远端端口号*/
+uint16 remote_port2=6000;																/*远端端口号*/
 /*IP配置方法选择，请自行选择*/
 uint8	ip_from=IP_FROM_DEFINE;				
 

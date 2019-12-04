@@ -85,8 +85,7 @@ namespace UDP_Parctice
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //pictureBox1.Image = Image.FromFile("D:\\Users\\HOWU\\Desktop\\IMG_7315.jpg");
-            
+            //pictureBox1.Image = Image.FromFile("D:\\Users\\HOWU\\Desktop\\IMG_7315.jpg");   
             TypeOfProtocolComboBox.Text = "UDP";
         }
 
@@ -99,7 +98,7 @@ namespace UDP_Parctice
                 IPAddress address = IPAddress.Parse(LocalIPAddressTextBox.Text.Trim());
                 int portNum = int.Parse(LocalIPPortTextBox.Text.Trim());
                 IPEndPoint endPoint = new IPEndPoint(address, portNum);
-                IPEndPoint endPoint2 = new IPEndPoint(address, 5001);
+                IPEndPoint endPoint2 = new IPEndPoint(address, 6000);
 
                 selectedMode = TypeOfProtocolComboBox.Text.ToString();
 
@@ -148,8 +147,8 @@ namespace UDP_Parctice
 
 
                         threadUDPSend2 = new Thread(SendMsg2);
-                       // threadUDPReceive2 = new Thread(RecMsg2);
-                       // threadUDPReceive2.Start();
+                        threadUDPReceive2 = new Thread(RecMsg2);
+                        threadUDPReceive2.Start();
                         threadUDPSend2.Start();
                         threadUDPSend2.Suspend();
 
@@ -188,7 +187,7 @@ namespace UDP_Parctice
             while (true)
             {
                 //用来保存发送方的IP和端口号
-                EndPoint RecPoint = new IPEndPoint(IPAddress.Parse("192.168.1.88"), 8088);
+                EndPoint RecPoint = new IPEndPoint(IPAddress.Any, 0);
                 byte[] buffer = new byte[1280];
                 int length = socketUDP.ReceiveFrom(buffer, ref RecPoint);
                 if (picture_flag)
@@ -215,10 +214,12 @@ namespace UDP_Parctice
             //这是一个线程，所以用死循环
             while (true)
             {
+                int i = 0;
                 //用来保存发送方的IP和端口号
-                EndPoint RecPoint = new IPEndPoint(IPAddress.Parse("192.168.1.88"), 8089);
-                byte[] buffer = new byte[2];
-                int length = socketUDP2.ReceiveFrom(buffer, ref RecPoint);
+                EndPoint RecPoint2 = new IPEndPoint(IPAddress.Any, 0);
+                byte[] buffer = new byte[2048];
+                int length = socketUDP2.ReceiveFrom(buffer, ref RecPoint2);
+                i++;
             }
         }
 
@@ -226,7 +227,6 @@ namespace UDP_Parctice
         private void SendMsg()
         {
             EndPoint point = new IPEndPoint(IPAddress.Parse("192.168.1.88"), 8088);
-            EndPoint RecPoint = new IPEndPoint(IPAddress.Any, 0);
             while (true)
             {
                 socketUDP.SendTo(send_data,  point);
@@ -236,8 +236,7 @@ namespace UDP_Parctice
 
         private void SendMsg2()
         {
-            EndPoint point = new IPEndPoint(IPAddress.Parse("192.168.1.88"), 8089);
-            EndPoint RecPoint = new IPEndPoint(IPAddress.Any, 0);
+            EndPoint point = new IPEndPoint(IPAddress.Parse("192.168.1.88"), 7000);
             while (true)
             {
                 socketUDP2.SendTo(control_data, point);
@@ -261,14 +260,31 @@ namespace UDP_Parctice
             if (close_flag)
             {
                 threadUDPWatch.Abort();
-                if (threadUDPSend.ThreadState == ThreadState.Suspended)
-                    threadUDPSend.Resume();
-                threadUDPSend.Abort();
+                try
+                {
+                    if (threadUDPSend2.ThreadState == ThreadState.Suspended)
+                        threadUDPSend2.Resume();
+                    threadUDPSend2.Abort();
+                }
+                catch
+                {
+                    MessageBox.Show("threadUDPSend2", "错误");
+                }
+                try 
+                {
+                    if (threadUDPSend.ThreadState == ThreadState.Suspended)
+                        threadUDPSend.Resume();
+                    threadUDPSend.Abort();
+                }
+                catch
+                {
+                    MessageBox.Show("threadUDPSend", "错误");
+                }
+                
                 socketUDP.Close();
-               // threadUDPReceive2.Abort();
-                if (threadUDPSend2.ThreadState == ThreadState.Suspended)
-                    threadUDPSend2.Resume();
-                threadUDPSend2.Abort();
+                threadUDPReceive2.Abort();
+                
+                
                 socketUDP2.Close();
             }
             
