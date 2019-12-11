@@ -73,12 +73,11 @@ namespace UDP_Parctice
         private void Form1_Load(object sender, EventArgs e)
         {
             //pictureBox1.Image = Image.FromFile("D:\\Users\\HOWU\\Desktop\\IMG_7315.jpg");   
-            TypeOfProtocolComboBox.Text = "UDP";
-            //获取本地IP及端口号，定义IPEndPoint endPoint变量，待后续与socket绑定
+            TypeOfProtocolComboBox.Text = "UDP";            //获取本地IP及端口号，定义IPEndPoint endPoint变量，待后续与socket绑定
             IPAddress address = IPAddress.Parse(LocalIPAddressTextBox.Text.Trim());
             int portNum = int.Parse(LocalIPPortTextBox.Text.Trim());
-            IPEndPoint endPoint = new IPEndPoint(address, portNum);
-            IPEndPoint endPoint2 = new IPEndPoint(address, 6000);
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse("192.168.1.105"), portNum);
+            IPEndPoint endPoint2 = new IPEndPoint(IPAddress.Parse("192.168.1.105"), 6000);
 
             socketUDP = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             socketUDP2 = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);

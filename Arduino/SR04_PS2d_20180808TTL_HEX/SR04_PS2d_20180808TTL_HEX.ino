@@ -99,6 +99,8 @@ int LEDA = 4;
 int LEDB = 5;
 
 byte start_flag = 0;
+int ch_flag = 0;
+
 ////////////////////////////
 void setup()
 {
@@ -139,30 +141,57 @@ void loop()
     //Serial.println(ch);
     if(ch == 's')
     {
+      ch_flag = 0; 
       Serial.println(START_DATA);
       delay(100); 
       Serial.println(START_DATA);
     }
     if(ch == 'u')
     {
-      Serial.println(PAD_UP_DATA);
-      delay(1000); 
+      ch_flag = 1; 
     }
     if(ch == 'd')
     {
-      Serial.println(PAD_DOWN_DATA);
-      delay(1000); 
+      ch_flag = 2; 
     }
     if(ch == 'l')
     {
-      Serial.println(PAD_LEFT_DATA);
-      delay(1000); 
+      ch_flag = 3; 
     }
     if(ch == 'r')
     {
-      Serial.println(PAD_RIGHT_DATA);
-      delay(1000); 
+      ch_flag = 4; 
     }    
+  }
+
+  switch(ch_flag)
+  {
+    case 1:
+    {
+      Serial.println(PAD_UP_DATA);
+      delay(1000);
+      break;
+    }
+    case 2:
+    {
+      Serial.println(PAD_DOWN_DATA);
+      delay(1000);
+      break;
+    } 
+    case 3:
+    {
+      Serial.println(PAD_LEFT_DATA);
+      delay(1000);
+      break;
+    } 
+    case 4:
+    {
+      Serial.println(PAD_RIGHT_DATA);
+      delay(1000);
+      break;
+    }
+    default:
+      break;
   }
 
  ///////////////////////////////////////////////    
