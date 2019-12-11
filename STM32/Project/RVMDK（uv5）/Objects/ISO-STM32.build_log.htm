@@ -27,10 +27,17 @@ Project File Date:  10/30/2019
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 2 (build 183)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Build target 'Fire_uCOS'
-compiling w5500_conf.c...
+compiling app.c...
+..\..\User\APP\app.c(271): warning:  #177-D: variable "AckData" was declared but never referenced
+  	uint8_t AckData[1] = { 0x01};
+..\..\User\APP\app.c(273): warning:  #177-D: variable "buff" was declared but never referenced
+  	uint8_t buff[1] = {0};
+..\..\User\APP\app.c(320): warning:  #177-D: variable "AckData" was declared but never referenced
+  	uint8_t AckData[1] = { 0x01};
+..\..\User\APP\app.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=33680 RO-data=16064 RW-data=536 ZI-data=51096  
-".\Objects\ISO-STM32.axf" - 0 Error(s), 0 Warning(s).
+Program Size: Code=33684 RO-data=16064 RW-data=536 ZI-data=51096  
+".\Objects\ISO-STM32.axf" - 0 Error(s), 3 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   D:\Users\HOWU\Desktop\video_transmission\STM32\Project\RVMDK£¨uv5£©\RTE

@@ -1,0 +1,7 @@
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\duyang-3-Serial\bin\Release\duyang-3-Serial.exe
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\duyang-3-Serial\bin\Release\duyang-3-Serial.pdb
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\duyang-3-Serial\obj\Release\duyang_3_Serial.Form1.resources
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\duyang-3-Serial\obj\Release\duyang_3_Serial.Properties.Resources.resources
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\duyang-3-Serial\obj\Release\串口显示图片.csproj.GenerateResource.Cache
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\duyang-3-Serial\obj\Release\duyang-3-Serial.exe
+D:\Users\HOWU\Desktop\video_transmission\6-UDP_version\duyang-3-Serial\obj\Release\duyang-3-Serial.pdb

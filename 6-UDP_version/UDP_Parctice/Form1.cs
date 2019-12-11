@@ -32,6 +32,7 @@ namespace UDP_Parctice
         public const byte down = 0x0B;
         public const byte left = 0x0C;
         public const byte rightt = 0x0D;
+        public const byte standd = 0x0E;
 
 
         //定义接收一帧图像的字节数组
@@ -58,6 +59,9 @@ namespace UDP_Parctice
         bool send2_flag = true;
         //复制字节数组索引
         uint line = 0; 
+
+        //连接成功标志
+        bool start_flag = false;
 
         public Form1()
         {
@@ -98,37 +102,40 @@ namespace UDP_Parctice
             threadUDPReceive2 = new Thread(RecMsg2);
             threadUDPReceive2.Start();
             threadUDPSend2.Start();
-            
+            start_flag = true;
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            send_data[0] = send_over;
-            threadUDPSend.Resume();
-            threadUDPWatch.Abort();
-            try
+        {            
+            if (start_flag)
             {
-                if (threadUDPSend2.ThreadState == ThreadState.Suspended)
-                    threadUDPSend2.Resume();
-                threadUDPSend2.Abort();
-            }
-            catch
-            {
-                MessageBox.Show("threadUDPSend2", "错误");
-            }
-            try
-            {
-                if (threadUDPSend.ThreadState == ThreadState.Suspended)
-                    threadUDPSend.Resume();
-                threadUDPSend.Abort();
-            }
-            catch
-            {
-                MessageBox.Show("threadUDPSend", "错误");
-            }
+                send_data[0] = send_over;
+               // threadUDPSend.Resume();
+                threadUDPWatch.Abort();
+                try
+                {
+                    if (threadUDPSend2.ThreadState == ThreadState.Suspended)
+                        threadUDPSend2.Resume();
+                    threadUDPSend2.Abort();
+                }
+                catch
+                {
+                    MessageBox.Show("threadUDPSend2", "错误");
+                }
+                try
+                {
+                    if (threadUDPSend.ThreadState == ThreadState.Suspended)
+                        threadUDPSend.Resume();
+                    threadUDPSend.Abort();
+                }
+                catch
+                {
+                    MessageBox.Show("threadUDPSend", "错误");
+                }
 
-            socketUDP.Close();
-            threadUDPReceive2.Abort();
-            socketUDP2.Close();
+                socketUDP.Close();
+                threadUDPReceive2.Abort();
+                socketUDP2.Close();
+            }   
         }
 
         private void ConnectButton_Click(object sender, EventArgs e)
@@ -377,6 +384,13 @@ namespace UDP_Parctice
             control_data[0] = rightt;
             threadUDPSend2.Resume();
             PictureDataBox.AppendText("right\r\n");
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            control_data[0] = standd;
+            threadUDPSend2.Resume();
+            PictureDataBox.AppendText("stand\r\n");
         }
 
     }

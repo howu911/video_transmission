@@ -185,9 +185,25 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\Users\HOWU\Desktop\澶у垱绋嬪簭\3-鎽勫儚澶存暟鎹彂閫佺粰W5500铻嶅悎\Project\User\APP\app.c</Filename>
+          <Filename>D:\Users\HOWU\Desktop\video_transmission\STM32\Project\User\APP\app.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\ISO_STM32\../../User/APP/app.c\250</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>339</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134220140</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>D:\Users\HOWU\Desktop\video_transmission\STM32\Project\User\APP\app.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\ISO_STM32\../../User/APP/app.c\339</Expression>
         </Bp>
       </Breakpoint>
       <Tracepoint>

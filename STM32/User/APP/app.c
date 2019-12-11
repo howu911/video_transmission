@@ -337,13 +337,15 @@ static  void  AppTaskReciveData ( void * p_arg )
 				{
 					recvfrom(SOCK_UDPS2,buff, len, remote_ip,&remote_port2);               /*W5500接收计算机发送来的数据*/
 					if(buff[0] == 0x0A)                                                    
-						printf("up\r\n");
+						printf("u");
 					if(buff[0] == 0x0B)                                                    
-						printf("down\r\n");
+						printf("d");
 					if(buff[0] == 0x0C)                                                    
-						printf("left\r\n");
+						printf("l");
 					if(buff[0] == 0x0D)                                                    
-						printf("right\r\n");
+						printf("r");
+					if(buff[0] == 0x0E)                                                    
+						printf("s");
 					//sendto(SOCK_UDPS,AckData, 1, remote_ip, remote_port);                /*W5500把接收到的数据发送给Remote*/
 				}
 				break;
