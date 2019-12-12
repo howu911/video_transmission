@@ -48,7 +48,10 @@
 uint8_t transfer_falg = 0;
 extern uint8_t Ov7725_vsync;
 extern OV7725_MODE_PARAM cam_mode;
-
+/*图片缓存内存管理对象*/
+OS_MEM picture_mem;
+uint8_t picture_data[3][1280];
+Queue Q;
 
 /*
 *********************************************************************************************************
@@ -172,9 +175,19 @@ static  void  AppTaskStart (void *p_arg)
     
     /* 配置时间片轮转调度 */		
     OSSchedRoundRobinCfg((CPU_BOOLEAN   )DEF_ENABLED,          //使能时间片轮转调度
-		                     (OS_TICK       )0,                    //把 OSCfg_TickRate_Hz / 10 设为默认时间片值
-												 (OS_ERR       *)&err );               //返回错误类型
+		                 (OS_TICK       )0,                    //把 OSCfg_TickRate_Hz / 10 设为默认时间片值
+						 (OS_ERR       *)&err );               //返回错误类型
 
+	/*创建图片缓存管理对象*/
+	OSMemCreate((OS_MEM       *)&picture_mem,    //内存分区控制块
+                (CPU_CHAR     *)"picture_mem",   //命名内存分区
+                (void         *)picture_data,   //内存分区首地址
+                (OS_MEM_QTY    )3,   //内存块数目
+                (OS_MEM_SIZE   )1280, //内存块大小（单位：字节）
+                (OS_ERR       *)&err);
+				
+	/*创建队列*/
+	InitQueue(Q);
 
 		/* 创建 OV7725摄像头 任务 */
     OSTaskCreate((OS_TCB     *)&AppTaskOV7725TCB,                             //任务控制块地址
@@ -268,9 +281,7 @@ static  void  AppTaskOV7725 ( void * p_arg )
 {
 	OS_ERR      err;
 	uint8_t frame_count = 0;
-	uint8_t AckData[1] = { 0x01};
 	//CPU_SR_ALLOC();
-	uint8_t buff[1] = {0};
 	//CPU_SR_ALLOC();
 	(void)p_arg;
 	
@@ -317,7 +328,6 @@ static  void  AppTaskReciveData ( void * p_arg )
 	uint8_t len = 0;
 	uint16 local_port2 = 7000;                              /*定义本地端口UDP2*/
 	uint8_t buff[1] = {0};
-	uint8_t AckData[1] = { 0x01};
 	(void)p_arg;
 	
 	while (DEF_TRUE) {                                   //任务体，通常写成一个死循环

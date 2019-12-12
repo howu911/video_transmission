@@ -1,56 +1,56 @@
 #include "image.h"
 
-
-void check_start(void)
+/*初始化队列*/
+void InitQueue(Queue Q)
 {
-	uint8_t buff[1] = {0};
-	while (DEF_TRUE){
-		while(getSn_SR(SOCK_UDPS) == SOCK_CLOSED)
-		{
-			socket(SOCK_UDPS,Sn_MR_UDP,local_port,0);
-		}
-
-		if(getSn_IR(SOCK_UDPS) & Sn_IR_RECV)
-		{
-			setSn_IR(SOCK_UDPS, Sn_IR_RECV);                                     /*清接收中断*/
-			if((getSn_RX_RSR(SOCK_UDPS))>0)                                    /*接收到数据*/
-			{
-				recvfrom(SOCK_UDPS,buff, 1, remote_ip,&remote_port);               /*W5500接收计算机发送来的数据*/
-				if(buff[0] == 0x01)
-				{
-					//sendto(SOCK_UDPS,AckData, 1, remote_ip, remote_port);                /*W5500把接收到的数据发送给Remote*/
-					break;
-				}						
-			}
-		}
+	int i = 0;
+	for(i = 0; i < PictureMaxSize; ++i)
+	{
+		Q->data[i] = NULL;
 	}
+	Q->Fornt = 1;
+	Q->Rear = 0;
+	Q->size = 0;
 }
 
-void check_stop(void)
+/*判断队列是否为空*/
+uint8_t IsEmpty(Queue Q)
 {
-	uint8_t buff[1] = {0};
-	while (DEF_TRUE){
-		while(getSn_SR(SOCK_UDPS) == SOCK_CLOSED)
-		{
-			socket(SOCK_UDPS,Sn_MR_UDP,local_port,0);
-		}
-
-		if(getSn_IR(SOCK_UDPS) & Sn_IR_RECV)
-		{
-			setSn_IR(SOCK_UDPS, Sn_IR_RECV);                                     /*清接收中断*/
-			if((getSn_RX_RSR(SOCK_UDPS))>0)                                    /*接收到数据*/
-			{
-				recvfrom(SOCK_UDPS,buff, 1, remote_ip,&remote_port);               /*W5500接收计算机发送来的数据*/
-				if(buff[0] == 0x08)
-				{
-					//sendto(SOCK_UDPS,AckData, 1, remote_ip, remote_port);                /*W5500把接收到的数据发送给Remote*/
-					close(SOCK_UDPS);
-					break;
-				}						
-			}
-		}
-	}
+	return Q->size == 0;
 }
+/*判断队列是否为满*/
+uint8_t IsFullQ(Queue Q)
+{
+	return Q->size >= PictureMaxSize;
+}
+
+static int Scc(int value)
+{
+	if (++value == PictureMaxSize)
+		value = 0;
+	return value;
+}
+/*入队*/
+void EnQueue(data Node, Queue Q)
+{
+	if(IsFullQ(Q))
+		return;
+	Q->size++;
+	Q->Rear = Scc(Q->Rear);
+	Q->data[Q->Rear] = Node;
+}
+/*出队*/
+data DeQueue(Queue Q)
+{
+	data re_val;
+	if(IsEmpty(Q))
+		return NULL;
+	re_val = Q->data[Q->Fornt];
+	Q->size--;
+	Q->Fornt = Scc(Q->Fornt);
+	return re_val;
+}
+
 
 void SendImageToComputer(uint16_t width, uint16_t height)
 {
