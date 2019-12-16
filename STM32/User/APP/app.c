@@ -38,7 +38,6 @@
 #include <includes.h>
 
 
-
 /*
 *********************************************************************************************************
 *                                            LOCAL DEFINES
@@ -49,9 +48,13 @@ uint8_t transfer_falg = 0;
 extern uint8_t Ov7725_vsync;
 extern OV7725_MODE_PARAM cam_mode;
 /*图片缓存内存管理对象*/
-OS_MEM picture_mem;
+//OS_MEM picture_mem;
 uint8_t picture_data[3][1280];
-Queue Q;
+struct PictureQueue temp_Q = {
+								1,
+								0,
+								0};
+Queue Q = &temp_Q;
 
 /*
 *********************************************************************************************************
@@ -62,6 +65,7 @@ Queue Q;
 static  OS_TCB   AppTaskStartTCB;    //任务控制块
 
 static  OS_TCB   AppTaskOV7725TCB;
+static  OS_TCB   AppTaskSendPictureTCB;
 static  OS_TCB   AppTaskRecvieDataTCB;
 static  OS_TCB   APPTaskControlSendTCB;
 
@@ -75,6 +79,7 @@ static  OS_TCB   APPTaskControlSendTCB;
 static  CPU_STK  AppTaskStartStk[APP_TASK_START_STK_SIZE];       //任务堆栈
 
 static  CPU_STK  AppTaskOV7725Stk [ APP_TASK_OV7725_STK_SIZE ];
+static  CPU_STK  AppTaskSendPictureSTK[APP_TASK_SEND_PICTURE_STK_SIZE];
 static  CPU_STK  AppTaskReceiveDataStk [ APP_TASK_RECVIE_DATA_STK_SIZE ];
 static  CPU_STK  APPTaskControlSendStk [ APP_TASK_CONTROL_SEND_SIZE ];
 
@@ -88,6 +93,7 @@ static  CPU_STK  APPTaskControlSendStk [ APP_TASK_CONTROL_SEND_SIZE ];
 static  void  AppTaskStart  (void *p_arg);               //任务函数声明
 
 static  void  AppTaskOV7725  ( void * p_arg );
+static  void  AppTaskSendPicture(void *p_arg);
 static  void  AppTaskReciveData ( void * p_arg );
 static  void  APPTaskControlSend(void * p_arg);
 
@@ -179,12 +185,12 @@ static  void  AppTaskStart (void *p_arg)
 						 (OS_ERR       *)&err );               //返回错误类型
 
 	/*创建图片缓存管理对象*/
-	OSMemCreate((OS_MEM       *)&picture_mem,    //内存分区控制块
-                (CPU_CHAR     *)"picture_mem",   //命名内存分区
-                (void         *)picture_data,   //内存分区首地址
-                (OS_MEM_QTY    )3,   //内存块数目
-                (OS_MEM_SIZE   )1280, //内存块大小（单位：字节）
-                (OS_ERR       *)&err);
+	// OSMemCreate((OS_MEM       *)&picture_mem,    //内存分区控制块
+    //             (CPU_CHAR     *)"picture_mem",   //命名内存分区
+    //             (void         *)picture_data,   //内存分区首地址
+    //             (OS_MEM_QTY    )3,   //内存块数目
+    //             (OS_MEM_SIZE   )1280, //内存块大小（单位：字节）
+    //             (OS_ERR       *)&err);
 				
 	/*创建队列*/
 	InitQueue(Q);
@@ -203,7 +209,7 @@ static  void  AppTaskStart (void *p_arg)
                  (void       *) 0,                                          //任务扩展（0表不扩展）
                  (OS_OPT      )(OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR), //任务选项
                  (OS_ERR     *)&err);                                       //返回错误类型
-#if 1								 								 
+
 	  OSTaskCreate((OS_TCB     *)&AppTaskRecvieDataTCB,                             //任务控制块地址
                  (CPU_CHAR   *)"App Task Recvie Data",                             //任务名称
                  (OS_TASK_PTR ) AppTaskReciveData,                                //任务函数
@@ -217,7 +223,7 @@ static  void  AppTaskStart (void *p_arg)
                  (void       *) 0,                                          //任务扩展（0表不扩展）
                  (OS_OPT      )(OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR), //任务选项
                  (OS_ERR     *)&err);                                       //返回错误类型
-#endif
+
 	OSTaskCreate((OS_TCB     *)&APPTaskControlSendTCB,                             //任务控制块地址
                  (CPU_CHAR   *)"App Task Control Send",                             //任务名称
                  (OS_TASK_PTR ) APPTaskControlSend,                                //任务函数
@@ -232,7 +238,20 @@ static  void  AppTaskStart (void *p_arg)
                  (OS_OPT      )(OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR), //任务选项
                  (OS_ERR     *)&err);                                       //返回错误类型
 
-    
+    OSTaskCreate((OS_TCB     *)&AppTaskSendPictureTCB,                             //任务控制块地址
+                 (CPU_CHAR   *)"App Task Send Picture",                             //任务名称
+                 (OS_TASK_PTR ) AppTaskSendPicture,                                //任务函数
+                 (void       *) 0,                                          //传递给任务函数（形参p_arg）的实参
+                 (OS_PRIO     ) APP_TASK_SEND_PICTURE_PRIO,                         //任务的优先级
+                 (CPU_STK    *)&AppTaskSendPictureSTK[0],                          //任务堆栈的基地址
+                 (CPU_STK_SIZE) APP_TASK_SEND_PICTURE_STK_SIZE / 10,                //任务堆栈空间剩下1/10时限制其增长
+                 (CPU_STK_SIZE) APP_TASK_SEND_PICTURE_STK_SIZE,                     //任务堆栈空间（单位：sizeof(CPU_STK)）
+                 (OS_MSG_QTY  ) 5u,                                         //任务可接收的最大消息数
+                 (OS_TICK     ) 0u,                                         //任务的时间片节拍数（0表默认值）
+                 (void       *) 0,                                          //任务扩展（0表不扩展）
+                 (OS_OPT      )(OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR), //任务选项
+                 (OS_ERR     *)&err);
+
 		OSTaskDel ( 0, & err );                     //删除起始任务本身，该任务不再运行
 		
 		
@@ -289,7 +308,7 @@ static  void  AppTaskOV7725 ( void * p_arg )
 	
 	
 	while (DEF_TRUE) {                                   //任务体，通常写成一个死循环
-		if(transfer_falg)
+		//if(transfer_falg)
 		{
 			if( Ov7725_vsync == 2 )
 			{
@@ -316,6 +335,49 @@ static  void  AppTaskOV7725 ( void * p_arg )
 		OSTimeDlyHMSM ( 0, 0, 0, 5, OS_OPT_TIME_DLY, & err );     //每隔500ms发送一次
 	}		
 }
+
+
+/*
+*********************************************************************************************************
+*                                          Send Picture Data TASK
+*********************************************************************************************************
+*/
+static  void  AppTaskSendPicture(void *p_arg)
+{
+	OS_ERR err;
+	uint8 DeQueue_Temp = 0;
+	CPU_SR_ALLOC();
+
+	while(DEF_TRUE)
+	{
+		if(Q->size > 0)
+		{
+			DeQueue_Temp = DeQueue(Q);
+			switch(getSn_SR(SOCK_UDPS))                                                /*获取socket的状态*/
+			{
+				case SOCK_CLOSED:                                                        /*socket处于关闭状态*/
+				{
+					socket(SOCK_UDPS2,Sn_MR_UDP,local_port,0);                              /*初始化socket*/
+					break;
+				}
+				case SOCK_UDP:
+				{
+					OS_CRITICAL_ENTER();                              //进入临界段，避免串口打印被打断
+					printf ( "\r\n发送一帧数据\r\n");        		
+					
+					OS_CRITICAL_EXIT();  //退出临界
+
+					sendto(SOCK_UDPS,picture_data[DeQueue_Temp], 1280, remote_ip, remote_port);
+					break;
+				}
+			}
+		}
+		
+		OSTimeDlyHMSM ( 0, 0, 0, 5, OS_OPT_TIME_DLY, & err );
+	}
+	
+}
+
 
 /*
 *********************************************************************************************************
