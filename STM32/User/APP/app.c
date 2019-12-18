@@ -49,7 +49,7 @@ extern uint8_t Ov7725_vsync;
 extern OV7725_MODE_PARAM cam_mode;
 /*图片缓存内存管理对象*/
 //OS_MEM picture_mem;
-uint8_t picture_data[3][1280];
+uint8_t picture_data[PictureMaxSize][1280];
 struct PictureQueue temp_Q = {
 								1,
 								0,
@@ -210,7 +210,7 @@ static  void  AppTaskStart (void *p_arg)
                  (OS_OPT      )(OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR), //任务选项
                  (OS_ERR     *)&err);                                       //返回错误类型
 
-	  OSTaskCreate((OS_TCB     *)&AppTaskRecvieDataTCB,                             //任务控制块地址
+	OSTaskCreate((OS_TCB     *)&AppTaskRecvieDataTCB,                             //任务控制块地址
                  (CPU_CHAR   *)"App Task Recvie Data",                             //任务名称
                  (OS_TASK_PTR ) AppTaskReciveData,                                //任务函数
                  (void       *) 0,                                          //传递给任务函数（形参p_arg）的实参
@@ -299,40 +299,54 @@ static  void  APPTaskControlSend(void * p_arg)
 static  void  AppTaskOV7725 ( void * p_arg )
 {
 	OS_ERR      err;
-	uint8_t frame_count = 0;
-	//CPU_SR_ALLOC();
-	//CPU_SR_ALLOC();
+	uint16_t i = 0,j = 0,k = 0; 
+	uint16_t data_line = 0;
+	uint8 temp_Q = 0;
+	uint8_t Camera_Data;
+
+	CPU_SR_ALLOC();
 	(void)p_arg;
 	
-	
-	
-	
 	while (DEF_TRUE) {                                   //任务体，通常写成一个死循环
-		//if(transfer_falg)
+		if(transfer_falg)
 		{
 			if( Ov7725_vsync == 2 )
 			{
-				frame_count++;
 				FIFO_PREPARE;  			/*FIFO准备*/	
-				//OS_CRITICAL_ENTER();                              //进入临界段，避免串口打印被打断
-				//printf ( "\r\n开始发送一帧数据\r\n");        		
+				for (data_line = 0; data_line < cam_mode.cam_height; ) //行数小于画面高度，一直等待
+				{
+					if(Q->size < PictureMaxSize)	//如果队列未满
+					{
+						if(data_line%2 == 0)
+						{			
+							temp_Q = EnQueue(Q);
+							i = 0;
+							k = 0;
+						}
+						while (i < 2)  //保证读2行
+						{
+							for(j = 0; j < cam_mode.cam_width; j++)
+							{
+								READ_FIFO_PIXEL(Camera_Data);		/* 从FIFO读出一个rgb565像素的高位到Camera_Data变量 */
+								picture_data[temp_Q][k++] = Camera_Data;
+								READ_FIFO_PIXEL(Camera_Data);		/* 从FIFO读出一个rgb565像素的低位到Camera_Data变量 */
+								picture_data[temp_Q][k++] = Camera_Data;
+							}
+							i++;
+						}
+						data_line += 2;
+						OS_CRITICAL_ENTER(); //进入临界段，避免串口打印被打断
+						printf ( "\r\n1\r\n");        		
+						OS_CRITICAL_EXIT();  //退出临界段
+					}
+					OSTimeDlyHMSM ( 0, 0, 0, 5, OS_OPT_TIME_DLY, & err );
+				}
 				
-				//OS_CRITICAL_EXIT();  //退出临界段
-						
-				
-				SendImageToComputer(cam_mode.cam_width,
-									cam_mode.cam_height);
-				
-				//OS_CRITICAL_ENTER();                              //进入临界段，避免串口打印被打断
-
-				//printf ( "\r\n一帧数据发送完成\r\n");        		
-				//printf("%d\n\r",frame_count);
-				//OS_CRITICAL_EXIT(); 
 				Ov7725_vsync = 0;			
 				macLED1_TOGGLE();
 			}
-		}	
-		OSTimeDlyHMSM ( 0, 0, 0, 5, OS_OPT_TIME_DLY, & err );     //每隔500ms发送一次
+		}
+		OSTimeDlyHMSM ( 0, 0, 0, 30, OS_OPT_TIME_DLY, & err );	
 	}		
 }
 
@@ -350,28 +364,31 @@ static  void  AppTaskSendPicture(void *p_arg)
 
 	while(DEF_TRUE)
 	{
-		if(Q->size > 0)
+		//if (transfer_falg)
 		{
-			DeQueue_Temp = DeQueue(Q);
-			switch(getSn_SR(SOCK_UDPS))                                                /*获取socket的状态*/
+			if(Q->size > 0)
 			{
-				case SOCK_CLOSED:                                                        /*socket处于关闭状态*/
+				DeQueue_Temp = DeQueue(Q);
+				switch(getSn_SR(SOCK_UDPS))                                                /*获取socket的状态*/
 				{
-					socket(SOCK_UDPS2,Sn_MR_UDP,local_port,0);                              /*初始化socket*/
-					break;
+					case SOCK_CLOSED:                                                        /*socket处于关闭状态*/
+					{
+						socket(SOCK_UDPS2,Sn_MR_UDP,local_port,0);                              /*初始化socket*/
+						break;
+					}
+					case SOCK_UDP:
+					{
+						sendto(SOCK_UDPS,picture_data[DeQueue_Temp], 1280, remote_ip, remote_port);
+						break;
+					}
 				}
-				case SOCK_UDP:
-				{
-					OS_CRITICAL_ENTER();                              //进入临界段，避免串口打印被打断
-					printf ( "\r\n发送一帧数据\r\n");        		
-					
-					OS_CRITICAL_EXIT();  //退出临界
-
-					sendto(SOCK_UDPS,picture_data[DeQueue_Temp], 1280, remote_ip, remote_port);
-					break;
-				}
+				OS_CRITICAL_ENTER();                              //进入临界段，避免串口打印被打断
+				printf ( "\r\n2\r\n");        		
+				OS_CRITICAL_EXIT();  //退出临界
 			}
 		}
+		
+		
 		
 		OSTimeDlyHMSM ( 0, 0, 0, 5, OS_OPT_TIME_DLY, & err );
 	}

@@ -9,7 +9,7 @@
 #include "w5500.h"
 #include  <os.h>
 
-#define PictureMaxSize	3
+#define PictureMaxSize	4
 
 
 struct PictureQueue;
@@ -19,7 +19,7 @@ typedef struct PictureQueue *Queue;
 
 extern uint8  remote_ip[4];											/*‘∂∂ÀIPµÿ÷∑*/
 extern uint16 remote_port;
-extern uint8_t picture_data[3][1280];
+extern uint8_t picture_data[PictureMaxSize][1280];
 extern Queue Q;
 extern OS_MEM picture_mem;
 
@@ -43,7 +43,6 @@ uint8 EnQueue(Queue Q);
 uint8 DeQueue(Queue Q);
 
 
-void SendImageToComputer(uint16_t width, uint16_t height);
 #endif
 
 
