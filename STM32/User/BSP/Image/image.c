@@ -42,11 +42,13 @@ uint8 EnQueue(Queue Q)
 /*³ö¶Ó*/
 uint8 DeQueue(Queue Q)
 {
+	uint8 temp_fornt;
 	if(IsEmpty(Q))
 		return 0;
+	temp_fornt = Q->Fornt;
 	Q->size--;
 	Q->Fornt = Scc(Q->Fornt);
-	return Q->Fornt;
+	return temp_fornt;
 }
 
 

@@ -339,14 +339,14 @@ static  void  AppTaskOV7725 ( void * p_arg )
 						printf ( "\r\n1\r\n");        		
 						OS_CRITICAL_EXIT();  //ÍË³öÁÙ½ç¶Î
 					}
-					OSTimeDlyHMSM ( 0, 0, 0, 5, OS_OPT_TIME_DLY, & err );
+					OSTimeDlyHMSM ( 0, 0, 0, 1, OS_OPT_TIME_DLY, & err );
 				}
 				
 				Ov7725_vsync = 0;			
 				macLED1_TOGGLE();
 			}
 		}
-		OSTimeDlyHMSM ( 0, 0, 0, 30, OS_OPT_TIME_DLY, & err );	
+		OSTimeDlyHMSM ( 0, 0, 0, 5, OS_OPT_TIME_DLY, & err );	
 	}		
 }
 
@@ -390,7 +390,7 @@ static  void  AppTaskSendPicture(void *p_arg)
 		
 		
 		
-		OSTimeDlyHMSM ( 0, 0, 0, 5, OS_OPT_TIME_DLY, & err );
+		OSTimeDlyHMSM ( 0, 0, 0, 1, OS_OPT_TIME_DLY, & err );
 	}
 	
 }
