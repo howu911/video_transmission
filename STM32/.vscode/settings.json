@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "bsp.h": "c",
+        "stm32f10x.h": "c",
+        "misc.h": "c",
+        "bsp_iwdg.h": "c",
+        "includes.h": "c"
+    }
+}

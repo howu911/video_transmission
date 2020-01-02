@@ -72,6 +72,7 @@
 #include  <lib_str.h>
 
 #include "stm32f10x.h"          // Modified by fire (原是 #include  <stm32f10x_lib.h>)  
+#include "misc.h"
 
 #include  <app_cfg.h>
 
@@ -93,6 +94,9 @@
 
 //IMAGE_APP头文件
 #include "image.h"
+
+//看门狗头文件
+#include "bsp_iwdg.h"
 
 
 /*
@@ -147,6 +151,7 @@
 */
 
 void         BSP_Init                    (void);
+void SystemReset(void);
 
 CPU_INT32U   BSP_CPU_ClkFreq             (void);
 

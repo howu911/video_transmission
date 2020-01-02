@@ -44,6 +44,12 @@
 *********************************************************************************************************
 */
 
+OS_FLAG_GRP	watchDogFlag;    //声明一个事件标志组
+#define OV7725_EVENT	(0x01 << 0)
+#define SENDPICTURE_EVENT	(0x01 << 1)
+#define RECIVEDATA_EVENT	(0x01 << 2)
+#define CONTROLSEND_EVENT	(0x01 << 3)
+
 uint8_t transfer_falg = 0;
 extern uint8_t Ov7725_vsync;
 extern OV7725_MODE_PARAM cam_mode;
@@ -64,6 +70,7 @@ Queue Q = &temp_Q;
 
 static  OS_TCB   AppTaskStartTCB;    //任务控制块
 
+static  OS_TCB	 AppTaskWatchDogTCB;
 static  OS_TCB   AppTaskOV7725TCB;
 static  OS_TCB   AppTaskSendPictureTCB;
 static  OS_TCB   AppTaskRecvieDataTCB;
@@ -76,8 +83,9 @@ static  OS_TCB   APPTaskControlSendTCB;
 *********************************************************************************************************
 */
 
-static  CPU_STK  AppTaskStartStk[APP_TASK_START_STK_SIZE];       //任务堆栈
+static  CPU_STK  AppTaskStartStk[APP_TASK_START_STK_SIZE];       //任务堆栈 
 
+static  CPU_STK  AppTakWatchDogSTK[APP_TASK_WATCHDOG_STK_SIZE];
 static  CPU_STK  AppTaskOV7725Stk [ APP_TASK_OV7725_STK_SIZE ];
 static  CPU_STK  AppTaskSendPictureSTK[APP_TASK_SEND_PICTURE_STK_SIZE];
 static  CPU_STK  AppTaskReceiveDataStk [ APP_TASK_RECVIE_DATA_STK_SIZE ];
@@ -92,6 +100,7 @@ static  CPU_STK  APPTaskControlSendStk [ APP_TASK_CONTROL_SEND_SIZE ];
 
 static  void  AppTaskStart  (void *p_arg);               //任务函数声明
 
+static  void  AppTaskWatchDog(void *p_arg);
 static  void  AppTaskOV7725  ( void * p_arg );
 static  void  AppTaskSendPicture(void *p_arg);
 static  void  AppTaskReciveData ( void * p_arg );
@@ -184,6 +193,13 @@ static  void  AppTaskStart (void *p_arg)
 		                 (OS_TICK       )0,                    //把 OSCfg_TickRate_Hz / 10 设为默认时间片值
 						 (OS_ERR       *)&err );               //返回错误类型
 
+
+	//创建事件标志组
+	OSFlagCreate((OS_FLAG_GRP  *)&watchDogFlag,  //事件标志组指针
+                 (CPU_CHAR     *)"flag for watchdog", //命名事件标志组
+                 (OS_FLAGS      )0,  //标志初始值
+                 (OS_ERR       *)&err);
+
 	/*创建图片缓存管理对象*/
 	// OSMemCreate((OS_MEM       *)&picture_mem,    //内存分区控制块
     //             (CPU_CHAR     *)"picture_mem",   //命名内存分区
@@ -194,6 +210,20 @@ static  void  AppTaskStart (void *p_arg)
 				
 	/*创建队列*/
 	InitQueue(Q);
+
+	OSTaskCreate((OS_TCB     *)&AppTaskWatchDogTCB,                             //任务控制块地址
+						(CPU_CHAR   *)"App Task WatchDog",                             //任务名称
+						(OS_TASK_PTR ) AppTaskWatchDog,                                //任务函数
+						(void       *) 0,                                          //传递给任务函数（形参p_arg）的实参
+						(OS_PRIO     ) APP_TASK_WATCHDOG_PRIO,                         //任务的优先级
+						(CPU_STK    *)&AppTakWatchDogSTK[0],                          //任务堆栈的基地址
+						(CPU_STK_SIZE) APP_TASK_WATCHDOG_STK_SIZE / 10,                //任务堆栈空间剩下1/10时限制其增长
+						(CPU_STK_SIZE) APP_TASK_WATCHDOG_STK_SIZE,                     //任务堆栈空间（单位：sizeof(CPU_STK)）
+						(OS_MSG_QTY  ) 5u,                                         //任务可接收的最大消息数
+						(OS_TICK     ) 0u,                                         //任务的时间片节拍数（0表默认值）
+						(void       *) 0,                                          //任务扩展（0表不扩展）
+						(OS_OPT      )(OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR), //任务选项
+						(OS_ERR     *)&err);
 
 		/* 创建 OV7725摄像头 任务 */
     OSTaskCreate((OS_TCB     *)&AppTaskOV7725TCB,                             //任务控制块地址
@@ -252,9 +282,41 @@ static  void  AppTaskStart (void *p_arg)
                  (OS_OPT      )(OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR), //任务选项
                  (OS_ERR     *)&err);
 
-		OSTaskDel ( 0, & err );                     //删除起始任务本身，该任务不再运行
+	
+
+	IWDG_Config(IWDG_Prescaler_64, 3500);
+
+	OSTaskDel ( 0, & err );                     //删除起始任务本身，该任务不再运行
 		
 		
+}
+
+/*
+*********************************************************************************************************
+*                                          WatchDog TASK
+*********************************************************************************************************
+*/
+static  void  AppTaskWatchDog(void *p_arg)
+{
+	OS_ERR err;
+	OS_FLAGS	flag_rdy;
+
+	while(DEF_TRUE)
+	{
+		flag_rdy = OSFlagPend((OS_FLAG_GRP  *)&watchDogFlag,   //事件标志组指针
+                      		  (OS_FLAGS      )(OV7725_EVENT | SENDPICTURE_EVENT | RECIVEDATA_EVENT | CONTROLSEND_EVENT),   //选定要操作的标志位
+                      		  (OS_TICK       )0, //等待期限（单位：时钟节拍）
+                              (OS_OPT        )(OS_OPT_PEND_FLAG_SET_ALL | OS_OPT_PEND_FLAG_CONSUME | OS_OPT_PEND_BLOCKING),     //选项
+                              (CPU_TS       *)0,    //返回等到事件标志时的时间戳
+                              (OS_ERR       *)&err);   //返回错误类型
+
+		if(flag_rdy & (OV7725_EVENT | SENDPICTURE_EVENT | RECIVEDATA_EVENT | CONTROLSEND_EVENT) == (OV7725_EVENT | SENDPICTURE_EVENT | RECIVEDATA_EVENT | CONTROLSEND_EVENT))
+		{
+			//喂狗
+			IWDG_Feed();
+		}
+		OSTimeDlyHMSM ( 0, 0, 2, 0, OS_OPT_TIME_DLY, & err );
+	}
 }
 
 /*
@@ -269,6 +331,12 @@ static  void  APPTaskControlSend(void * p_arg)
 	(void)p_arg;
 	while(DEF_TRUE)
 	{
+		//抛出事件
+		OSFlagPost((OS_FLAG_GRP  *)&watchDogFlag, //事件标志组指针
+                   (OS_FLAGS      )CONTROLSEND_EVENT, //选定要操作的标志位
+                   (OS_OPT        )OS_OPT_POST_FLAG_SET,   //选项
+                   (OS_ERR       *)&err); //返回错误类型;
+		
 		while(getSn_SR(SOCK_UDPS) == SOCK_CLOSED)
 		{
 			socket(SOCK_UDPS,Sn_MR_UDP,local_port,0);
@@ -282,6 +350,8 @@ static  void  APPTaskControlSend(void * p_arg)
 				recvfrom(SOCK_UDPS,buff, 1, remote_ip,&remote_port);               /*W5500接收计算机发送来的数据*/
 				if(buff[0] == 0x01)
 					transfer_falg = 1;
+				else if(buff[0] == 0x02)
+					SystemReset();
 				else if(buff[0] == 0x08)
 					transfer_falg = 0;
 			}
@@ -304,10 +374,16 @@ static  void  AppTaskOV7725 ( void * p_arg )
 	uint8 temp_Q = 0;
 	uint8_t Camera_Data;
 
-	CPU_SR_ALLOC();
+	//CPU_SR_ALLOC();
 	(void)p_arg;
 	
 	while (DEF_TRUE) {                                   //任务体，通常写成一个死循环
+		//抛出事件
+		OSFlagPost((OS_FLAG_GRP  *)&watchDogFlag, //事件标志组指针
+                   (OS_FLAGS      )OV7725_EVENT, //选定要操作的标志位
+                   (OS_OPT        )OS_OPT_POST_FLAG_SET,   //选项
+                   (OS_ERR       *)&err); //返回错误类型;
+
 		if(transfer_falg)
 		{
 			if( Ov7725_vsync == 2 )
@@ -335,9 +411,9 @@ static  void  AppTaskOV7725 ( void * p_arg )
 							i++;
 						}
 						data_line += 2;
-						OS_CRITICAL_ENTER(); //进入临界段，避免串口打印被打断
-						printf ( "\r\n1\r\n");        		
-						OS_CRITICAL_EXIT();  //退出临界段
+						//OS_CRITICAL_ENTER(); //进入临界段，避免串口打印被打断
+						//printf ( "\r\n1\r\n");        		
+						//OS_CRITICAL_EXIT();  //退出临界段
 					}
 					OSTimeDlyHMSM ( 0, 0, 0, 1, OS_OPT_TIME_DLY, & err );
 				}
@@ -360,12 +436,17 @@ static  void  AppTaskSendPicture(void *p_arg)
 {
 	OS_ERR err;
 	uint8 DeQueue_Temp = 0;
-	CPU_SR_ALLOC();
+	//CPU_SR_ALLOC();
 
 	while(DEF_TRUE)
 	{
+		//抛出事件
+		OSFlagPost((OS_FLAG_GRP  *)&watchDogFlag, //事件标志组指针
+                   (OS_FLAGS      )SENDPICTURE_EVENT, //选定要操作的标志位
+                   (OS_OPT        )OS_OPT_POST_FLAG_SET,   //选项
+                   (OS_ERR       *)&err); //返回错误类型;
 		//if (transfer_falg)
-		{
+		// {
 			if(Q->size > 0)
 			{
 				DeQueue_Temp = DeQueue(Q);
@@ -382,11 +463,11 @@ static  void  AppTaskSendPicture(void *p_arg)
 						break;
 					}
 				}
-				OS_CRITICAL_ENTER();                              //进入临界段，避免串口打印被打断
-				printf ( "\r\n2\r\n");        		
-				OS_CRITICAL_EXIT();  //退出临界
+				// OS_CRITICAL_ENTER();                              //进入临界段，避免串口打印被打断
+				// printf ( "\r\n2\r\n");        		
+				// OS_CRITICAL_EXIT();  //退出临界
 			}
-		}
+		// }
 		
 		
 		
@@ -410,6 +491,12 @@ static  void  AppTaskReciveData ( void * p_arg )
 	(void)p_arg;
 	
 	while (DEF_TRUE) {                                   //任务体，通常写成一个死循环
+		//抛出事件
+		OSFlagPost((OS_FLAG_GRP  *)&watchDogFlag, //事件标志组指针
+                   (OS_FLAGS      )RECIVEDATA_EVENT, //选定要操作的标志位
+                   (OS_OPT        )OS_OPT_POST_FLAG_SET,   //选项
+                   (OS_ERR       *)&err); //返回错误类型;
+
 		switch(getSn_SR(SOCK_UDPS2))                                                /*获取socket的状态*/
 		{
 			case SOCK_CLOSED:                                                        /*socket处于关闭状态*/

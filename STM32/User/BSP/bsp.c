@@ -82,7 +82,17 @@ CPU_INT32U  BSP_CPU_ClkFreq_MHz;
 *********************************************************************************************************
 */
 
+void SystemReset(void)
+{
+    register uint32_t __regFaultMask        __ASM("faultmask");
+    __regFaultMask = (uint32_t)1;
 
+    SCB->AIRCR  = ((0x5FA << SCB_AIRCR_VECTKEY_Pos)      | 
+                   (SCB->AIRCR & SCB_AIRCR_PRIGROUP_Msk) | 
+                   SCB_AIRCR_SYSRESETREQ_Msk);                   /* Keep priority group unchanged */
+  __DSB();                                                     /* Ensure completion of memory access */              
+  while(1);                                                    /* wait until reset */
+}
 
 /*
 *********************************************************************************************************

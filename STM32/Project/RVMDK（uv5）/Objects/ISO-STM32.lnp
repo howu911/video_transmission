@@ -45,6 +45,7 @@
 ".\objects\bsp_i2c_ee.o"
 ".\objects\bsp_i2c_gpio.o"
 ".\objects\image.o"
+".\objects\bsp_iwdg.o"
 ".\objects\cpu_core.o"
 ".\objects\cpu_a.o"
 ".\objects\cpu_c.o"
