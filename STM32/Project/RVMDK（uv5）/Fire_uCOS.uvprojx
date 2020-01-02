@@ -334,7 +334,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS;..\..\Libraries\FWlib\inc;..\..\User;..\..\User\APP;..\..\User\BSP;..\..\User\BSP\Key;..\..\User\BSP\led;..\..\User\BSP\usart;..\..\User\uC-CPU;..\..\User\uC-CPU\ARM-Cortex-M3\RealView;..\..\User\uC-LIB;..\..\User\uCOS-III\Source;..\..\User\uCOS-III\Ports\ARM-Cortex-M3\Generic\RealView;..\..\User\BSP\Ethernet\Internet;..\..\User\BSP\Ethernet\W5500;..\..\User\BSP\TimBase;..\..\User\BSP\I2C_EEPROM;..\..\User\BSP\Image</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS;..\..\Libraries\FWlib\inc;..\..\User;..\..\User\APP;..\..\User\BSP;..\..\User\BSP\Key;..\..\User\BSP\led;..\..\User\BSP\usart;..\..\User\uC-CPU;..\..\User\uC-CPU\ARM-Cortex-M3\RealView;..\..\User\uC-LIB;..\..\User\uCOS-III\Source;..\..\User\uCOS-III\Ports\ARM-Cortex-M3\Generic\RealView;..\..\User\BSP\Ethernet\Internet;..\..\User\BSP\Ethernet\W5500;..\..\User\BSP\TimBase;..\..\User\BSP\I2C_EEPROM;..\..\User\BSP\Image;..\..\User\BSP\iwdg</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -711,6 +711,11 @@
               <FileName>image.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\BSP\Image\image.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\BSP\iwdg\bsp_iwdg.c</FilePath>
             </File>
           </Files>
         </Group>

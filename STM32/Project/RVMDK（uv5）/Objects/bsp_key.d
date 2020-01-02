@@ -64,3 +64,4 @@
 .\objects\bsp_key.o: ..\..\User\APP\os_cfg.h
 .\objects\bsp_key.o: ..\..\User\uCOS-III\Source\os_type.h
 .\objects\bsp_key.o: ..\..\User\uCOS-III\Ports\ARM-Cortex-M3\Generic\RealView\os_cpu.h
+.\objects\bsp_key.o: ..\..\User\BSP\iwdg\bsp_iwdg.h

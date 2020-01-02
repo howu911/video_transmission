@@ -49,9 +49,11 @@
 
 #define  APP_TASK_START_PRIO                        2            //任务优先级
 
-#define  APP_TASK_OV7725_PRIO                       5
-#define  APP_TASK_CONTROL_SEND_PRIO					4
-#define  APP_TASK_RECVIE_DATA_PRIO					3
+#define  APP_TASK_WATCHDOG_PRIO                      3
+#define  APP_TASK_OV7725_PRIO                       9
+#define  APP_TASK_CONTROL_SEND_PRIO					10
+#define  APP_TASK_SEND_PICTURE_PRIO                 8
+#define  APP_TASK_RECVIE_DATA_PRIO					7
 
 
 
@@ -64,9 +66,11 @@
 
 #define  APP_TASK_START_STK_SIZE                    128          //任务堆栈空间（单位：sizeof(CPU_STK)）
 
-#define  APP_TASK_OV7725_STK_SIZE                   (2048)
+#define  APP_TASK_WATCHDOG_STK_SIZE                 128
+#define  APP_TASK_OV7725_STK_SIZE                   512
+#define  APP_TASK_SEND_PICTURE_STK_SIZE             512
 #define  APP_TASK_CONTROL_SEND_SIZE					256
-#define  APP_TASK_RECVIE_DATA_STK_SIZE				1024
+#define  APP_TASK_RECVIE_DATA_STK_SIZE				256
 
 
 

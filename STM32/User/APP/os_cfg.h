@@ -49,10 +49,10 @@
 
 
                                              /* ----------------------------- EVENT FLAGS --------------------------- */
-#define OS_CFG_FLAG_EN                  0u   //使能/禁用事件标志组
-#define OS_CFG_FLAG_DEL_EN              0u   //使能/禁用 OSFlagDel() 函数
-#define OS_CFG_FLAG_MODE_CLR_EN         0u   //使能/禁用标志位清0触发模式
-#define OS_CFG_FLAG_PEND_ABORT_EN       0u   //使能/禁用 OSFlagPendAbort() 函数
+#define OS_CFG_FLAG_EN                  1u   //使能/禁用事件标志组
+#define OS_CFG_FLAG_DEL_EN              1u   //使能/禁用 OSFlagDel() 函数
+#define OS_CFG_FLAG_MODE_CLR_EN         1u   //使能/禁用标志位清0触发模式
+#define OS_CFG_FLAG_PEND_ABORT_EN       1u   //使能/禁用 OSFlagPendAbort() 函数
 
 
                                              /* -------------------------- MEMORY MANAGEMENT ------------------------ */

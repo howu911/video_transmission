@@ -27,6 +27,7 @@ namespace UDP_Parctice
         byte[] send_data = new byte[1];
         byte[] control_data = new byte[1];
         public const byte send_start = 0x01;
+        public const byte restart = 0x02;
         public const byte send_over = 0x08;
         public const byte up = 0x0A;
         public const byte down = 0x0B;
@@ -391,6 +392,15 @@ namespace UDP_Parctice
             threadUDPSend2.Resume();
             PictureDataBox.AppendText("stand\r\n");
         }
+
+        private void restart_button_Click(object sender, EventArgs e)
+        {
+            send_data[0] = restart;
+            threadUDPSend.Resume();
+            ConnectButton.Text = "连接";
+            PictureDataBox.AppendText("restart\r\n");
+        }
+
 
     }
 }
