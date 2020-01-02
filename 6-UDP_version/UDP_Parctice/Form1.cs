@@ -186,7 +186,7 @@ namespace UDP_Parctice
                     line = 0;
                     picture_flag = !picture_flag;
                     picture_success_flag = true;
-                    Thread.Sleep(70);  //这里的时间应该大于定时器的间隔时间，要不然会出现视频画面的前面一小部分显示的是下一帧的画面
+                    Thread.Sleep(50);  //这里的时间应该大于定时器的间隔时间，要不然会出现视频画面的前面一小部分显示的是下一帧的画面
                 }   
             }
         }
